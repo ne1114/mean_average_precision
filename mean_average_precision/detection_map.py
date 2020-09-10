@@ -1,6 +1,6 @@
 import numpy as np
-from mean_average_precision.ap_accumulator import APAccumulator
-from mean_average_precision.utils.bbox import jaccard
+from ap_accumulator import APAccumulator
+from utils.bbox import jaccard
 import math
 import matplotlib.pyplot as plt
 
@@ -158,3 +158,14 @@ class DetectionMAP:
 
         plt.suptitle("Mean average precision : {:0.2f}".format(sum(mean_average_precision)/len(mean_average_precision)))
         fig.tight_layout()
+
+
+    def output_mAP(self, interpolated=True):
+        mean_average_precision = []
+        for i in range(self.n_class):
+            precisions, recalls = self.compute_precision_recall_(i, interpolated)
+            average_precision = self.compute_ap(precisions, recalls)
+            mean_average_precision.append(average_precision)
+            # print('class #{iter} : mean Average Precision = {mAP}'.format(iter=i, mAP=average_precision))
+
+        return sum(mean_average_precision) / len(mean_average_precision)

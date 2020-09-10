@@ -1,21 +1,24 @@
 """
     Simple Usage example (with 3 images)
 """
-from mean_average_precision.detection_map import DetectionMAP
-from mean_average_precision.utils.show_frame import show_frame
+# import os, sys
+# dir_path = os.path.dirname(os.path.abspath(__file__))
+# sys.path.append(dir_path+"/")
+from detection_map import DetectionMAP
+from utils.show_frame import show_frame
 import numpy as np
 import matplotlib.pyplot as plt
 
 pred_bb1 = np.array([[0.880688, 0.44609185, 0.95696718, 0.6476958],
                      [0.84020283, 0.45787981, 0.99351478, 0.64294884],
-                     [0.78723741, 0.61799151, 0.9083041, 0.75623035],
                      [0.22078986, 0.30151826, 0.36679274, 0.40551913],
+                     [0.78723741, 0.61799151, 0.9083041, 0.75623035],
                      [0.0041579, 0.48359361, 0.06867643, 0.60145104],
                      [0.4731401, 0.33888632, 0.75164948, 0.80546954],
                      [0.75489414, 0.75228018, 0.87922037, 0.88110524],
                      [0.21953127, 0.77934921, 0.34853417, 0.90626764],
                      [0.81, 0.11, 0.91, 0.21]])
-pred_cls1 = np.array([0, 0, 0, 1, 1, 2, 2, 2, 3])
+pred_cls1 = np.array([0, 0, 1, 0, 1, 2, 2, 2, 3])
 pred_conf1 = np.array([0.95, 0.75, 0.4, 0.3, 1, 1, 0.75, 0.5, 0.8])
 gt_bb1 = np.array([[0.86132812, 0.48242188, 0.97460938, 0.6171875],
                    [0.18554688, 0.234375, 0.36132812, 0.41601562],
@@ -52,30 +55,36 @@ pred_bb3 = np.array([[0.74, 0.58, 1.0, 0.83],
                      [0.59, 0.24, 1.0, 0.63],
                      [0.55, 0.24, 0.33, 0.7],
                      [0.12, 0.21, 0.31, 0.39],
-                     [0.1240625, 0.2109375, 0.859375, 0.39453125],
-                     [2.86702722e-01, 5.87677717e-01, 3.90843153e-01, 7.14454949e-01],
-                     [2.87590116e-01, 8.76132399e-02, 3.79709303e-01, 2.05121845e-01]])
+                     [0.1240625, 0.2109375, 0.859375, 0.39453125]])
+                    #  [2.86702722e-01, 5.87677717e-01, 3.90843153e-01, 7.14454949e-01],
+                    #  [2.87590116e-01, 8.76132399e-02, 3.79709303e-01, 2.05121845e-01]
+        
 pred_cls3 = np.array(
-    [0, 0, 0, 0, 0, 1, 1, 2, 2])
+    [0, 0, 0, 0, 0, 1, 1]) # , 2, 2
 pred_conf3 = np.array([0.75, 0.90, 0.9, 0.9, 0.5, 0.84,
-                       0.1, 0.2363426, 0.02707205])
+                       0.1])   # , 0.2363426, 0.02707205
 gt_bb3 = np.array([[0.74609375, 0.58007812, 1.05273438, 0.83007812],
                    [0.57226562, 0.234375, 1.14453125, 0.62890625],
-                   [0.1240625, 0.2109375, 0.329375, 0.39453125]])
-gt_cls3 = np.array([0, 0, 1])
+                   [0.1240625, 0.2109375, 0.329375, 0.39453125],
+                   [0.1, 0.2, 0.3, 0.4]])
+gt_cls3 = np.array([0, 0, 1, 2])
 
+# (pred_bb1, pred_cls1, pred_conf1, gt_bb1, gt_cls1),
+#               (pred_bb2, pred_cls2, pred_conf2, gt_bb2, gt_cls2),
 if __name__ == '__main__':
-    frames = [(pred_bb1, pred_cls1, pred_conf1, gt_bb1, gt_cls1),
-              (pred_bb2, pred_cls2, pred_conf2, gt_bb2, gt_cls2),
+    frames = [
               (pred_bb3, pred_cls3, pred_conf3, gt_bb3, gt_cls3)]
     n_class = 4
 
     mAP = DetectionMAP(n_class)
     for i, frame in enumerate(frames):
         print("Evaluate frame {}".format(i))
-        show_frame(*frame)
+        # show_frame(*frame)
         mAP.evaluate(*frame)
 
-    mAP.plot()
-    plt.show()
+    mean_average_precision = mAP.output_mAP()
+    print(mean_average_precision)
+
+    # mAP.plot()
+    # plt.show()
     #plt.savefig("pr_curve_example.png")
